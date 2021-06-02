@@ -1,4 +1,6 @@
 import React from 'react'
+import "./Login.css"
+import Popup from "./Popup.js"
 
 class Login extends React.Component {
 
@@ -6,11 +8,12 @@ class Login extends React.Component {
         username: null,
         setUsername: null,
         newTask: "",
-        todoItems: []
+        newCategory: "",
+        todoItems: {},
+        finished: false
     }
 
     renderUser = () => {
-        console.log ("In renderUser");
         if(this.state.setUsername && this.state.setUsername !== ""){
             return (
                 <label> Welcome, {this.state.setUsername}!</label>
@@ -26,7 +29,6 @@ class Login extends React.Component {
     }
     
     submitUsername = () => {
-        console.log("In submitUsername");
         this.setState({setUsername: this.state.username});
     }
 
@@ -34,48 +36,71 @@ class Login extends React.Component {
         this.setState({newTask : e.target.value});
     }
 
+    updateCategory = (e) =>{
+        this.setState({newCategory: e.target.value});
+    }
+
     addToDo = () => {
-        let newTasks = this.state.todoItems;
-        newTasks.push(this.state.newTask);
-        this.setState({todoItems: newTasks});
+        let newToDo = this.state.todoItems;
+        if(newToDo[this.state.newCategory] === undefined){
+            newToDo[this.state.newCategory] = [];
+        }
+        newToDo[this.state.newCategory].push(this.state.newTask);
+        this.setState({todoItems: newToDo});
     }
 
     completeTask = (e) => {
-        const targetIndex = Number(e.target.id);
-        console.log("DELETE", targetIndex);
+        const idInfo = e.target.id.split(' ');
         let newTasks = this.state.todoItems;
-        newTasks = newTasks.filter((item, index) => index !== targetIndex);
-        this.setState({todoItems: newTasks});
+        newTasks[idInfo[1]] = newTasks[idInfo[1]].filter((item, index) => index !== Number(idInfo[0]));
+        this.setState({todoItems: newTasks}); 
+        document.querySelector("body").classList.add("newClass")
+
     }
 
     clearTasks = (e) => {
-        this.setState({todoItems : []});
+        this.setState({todoItems : {}});
+        this.setState({finished: true});
+    }
+
+    finishedImage = () =>{
+        if(this.state.finished){
+            console.log('finished')
+            return(<img src="https://media1.tenor.com/images/61443e0f49b27865d2a4c4386025935b/tenor.gif"></img>)
+            }
     }
 
     render() {
-        const todoItems = this.state.todoItems.map((item, indexOf) => {
-            return (
-                <div>
-                    <form>
-                        <input type="button" value="Delete!" id={indexOf} onClick={this.completeTask} />
-                        <label> {item}</label>
-                    </form>
-                </div>
-            )
+        let todoItems = [];
+        console.log(this.state.todoItems)
+        todoItems = Object.keys(this.state.todoItems).map((tasks, indexOf) => {
+            return this.state.todoItems[tasks].map((item, indexOf) => {
+                return(
+                    <div>
+                        <form>
+                            <input type="button" className="button" value="Delete!" id={`${indexOf} ${tasks}`} onClick={this.completeTask} />
+                            <label> {tasks}: {item}</label>
+                        </form>
+                    </div>
+                )
+            })
         })
         return (
-            <form>
+            <form className="Login">
                 <label for="username">Username: </label>
                 <input type="text" name="username" id="username" onChange={this.setUsername} required />
-                <input type="button" value="Submit Username" onClick={this.submitUsername} />
+                <input type="button" className="button" value="Submit Username" onClick={this.submitUsername} />
                 {this.renderUser()}
+                <br />
+                <label for="categoryToAdd">Category: </label>
+                <input type="text" name="categoryToAdd" id="categoryToAdd" onChange={this.updateCategory} /> 
                 <br />
                 <label for="toAdd">New Task: </label>
                 <input type="text" name="toAdd" id="toAdd" onChange={this.updateToDo} />
-                <input type="Button" value="Add" onClick={this.addToDo} />
-                <input type="Button" value="Finish All" onClick={this.clearTasks} />
+                <input type="Button" className="button" value="Add" onClick={this.addToDo} />
+                <input type="Button" className="button" value="Finish All" onClick={this.clearTasks} />
+                {this.finishedImage()} 
                 {todoItems}
-
             </form>
         )
     }
