@@ -1,6 +1,6 @@
 import React from 'react'
 import "./Login.css"
-import Popup from "./Popup.js"
+import fs from 'fs'
 
 class Login extends React.Component {
 
@@ -41,6 +41,9 @@ class Login extends React.Component {
     }
 
     addToDo = () => {
+        if(this.state.finished){
+            this.setState({finished: false});
+        }
         let newToDo = this.state.todoItems;
         if(newToDo[this.state.newCategory] === undefined){
             newToDo[this.state.newCategory] = [];
@@ -65,9 +68,8 @@ class Login extends React.Component {
 
     finishedImage = () =>{
         if(this.state.finished){
-            console.log('finished')
-            return(<img src="https://media1.tenor.com/images/61443e0f49b27865d2a4c4386025935b/tenor.gif"></img>)
-            }
+            return(<img className="fullWidth" src="https://media1.tenor.com/images/61443e0f49b27865d2a4c4386025935b/tenor.gif"></img>)
+        }
     }
 
     render() {

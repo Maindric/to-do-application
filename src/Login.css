@@ -66,3 +66,9 @@
     border: 1px solid #999;
     font-size: 20px;
   }
+
+  .fullWidth {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
